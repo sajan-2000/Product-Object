@@ -1,46 +1,48 @@
-let books = [
+let bookList = [
     {
         name: "The Alchemist",
-        price: 30,
+        price: 200,
         status: "available",
         quantity: 5,
-        id: 121
+        id: 1
     },
     {
         name: "It Ends With Us",
-        price: 20,
+        price: 120,
         status: "available",
         quantity: 7,
-        id: 122
+        id: 2
     },
     {
         name: "To Kill a Mockingbird",
-        price: 50,
+        price: 80,
         status: "available",
         quantity: 8,
-        id: 123
+        id: 3
     },
     {
         name: "1984",
-        price: 20,
+        price: 90,
         status: "available",
-        quantity: 7,
-        id: 124
+        quantity: 4,
+        id: 4
     },
     {
         name: "Silent Voice",
-        price: 20,
+        price: 55,
         status: "available",
-        quantity: 7,
-        id: 125
+        quantity: 9,
+        id: 5
     },
     {
         name: "Harry Potter",
-        price: 20,
+        price: 100,
         status: "available",
-        quantity: 7,
-        id: 126
+        quantity: 11,
+        id: 6
     },]
+
+let cartList = [];
 
 let option;
 
@@ -49,4 +51,70 @@ function displayMenu() {
     const readline = require("readline-sync");
     let input = readline.questionInt();
     return input;
+}
+
+function displayBookidOption() {
+    console.log("Provide your Book Id which you want To Add");
+    const readline = require("readline-sync");
+    let input = readline.questionInt();
+    return input;
+}
+
+function exit() {
+    console.log("You have logged out successfully \n");
+    return;
+}
+option = displayMenu();
+
+if (option === 1) {
+    console.log(`
++------+--------------------+-------+----------+------------+
+| id   |        Name       | Price | Status | Quantity |
++------+--------------------+-------+----------+------------+`);
+    bookList.map(({ name, price, status, quantity, id }) => {
+        console.log(`
++------+--------------------+-------+----------+------------+
+| ${id} |      ${name}     | ${price} | ${status} | ${quantity}
++------+--------------------+-------+----------+------------+`);
+    })
+
+    console.log("All the available books have shown suuccessfully\n");
+
+    option = displayMenu()
+}
+
+if (option === 2) {
+    let idInput = displayBookidOption();
+
+    bookList.map((book) => {
+        if (book.id === idInput) {
+            cartList[cartList.length] = { ...book };
+            book.quantity = --book.quantity;
+        }
+        cartList.map((cartBook) => {
+            cartBook.quantity = 1;
+        })
+    })
+    console.log("We Have successfully Added The Book To The Cart\n")
+
+    option = displayMenu();
+}
+
+if (option === 3) {
+    console.log(`
++------+--------------------+-------+----------+------------+
+| id   |        Name       | Price | Status | Quantity |
++------+--------------------+-------+----------+------------+`);
+    cartList.map(({ id, price, status, name, quantity }) => {
+        console.log(`
++------+--------------------+-------+----------+------------+
+| ${id}   |     ${name}    | ${price} | ${status} | ${quantity} |
++------+--------------------+-------+----------+------------+\n`);
+    })
+
+    option = displayMenu();
+}
+
+if (option === 4) {
+    exit();
 }
