@@ -60,13 +60,7 @@ function displayBookidOption() {
     return input;
 }
 
-function exit() {
-    console.log("You have logged out successfully \n");
-    return;
-}
-option = displayMenu();
-
-if (option === 1) {
+function showAvailableBooks() {
     console.log(`
 +------+--------------------+-------+----------+------------+
 | id   |        Name       | Price | Status | Quantity |
@@ -79,7 +73,29 @@ if (option === 1) {
     })
 
     console.log("All the available books have shown suuccessfully\n");
+}
 
+function printCartItems() {
+    console.log(`
++------+--------------------+-------+----------+------------+
+| id   |        Name       | Price | Status | Quantity |
++------+--------------------+-------+----------+------------+`);
+    cartList.map(({ id, price, status, name, quantity }) => {
+        console.log(`
++------+--------------------+-------+----------+------------+
+| ${id}   |     ${name}    | ${price} | ${status} | ${quantity} |
++------+--------------------+-------+----------+------------+\n`);
+    })
+}
+
+function exit() {
+    console.log("You have logged out successfully \n");
+    return;
+}
+option = displayMenu();
+
+if (option === 1) {
+    showAvailableBooks();
     option = displayMenu()
 }
 
@@ -101,20 +117,38 @@ if (option === 2) {
 }
 
 if (option === 3) {
-    console.log(`
-+------+--------------------+-------+----------+------------+
-| id   |        Name       | Price | Status | Quantity |
-+------+--------------------+-------+----------+------------+`);
-    cartList.map(({ id, price, status, name, quantity }) => {
-        console.log(`
-+------+--------------------+-------+----------+------------+
-| ${id}   |     ${name}    | ${price} | ${status} | ${quantity} |
-+------+--------------------+-------+----------+------------+\n`);
-    })
+    if (cartList.length == 0) {
+        console.log("Cart is Empty Nothing to Show");
+        option = displayMenu()
+    } else {
+        printCartItems();
+        option = displayMenu();
+    }
 
-    option = displayMenu();
+    if (option == 2) {
+        let idInput = displayBookidOption();
+
+        bookList.map((book) => {
+            if (book.id === idInput) {
+                cartList[cartList.length] = { ...book };
+                book.quantity = --book.quantity;
+            }
+            cartList.map((cartBook) => {
+                cartBook.quantity = 1;
+            })
+        })
+        console.log("We Have successfully Added The Book To The Cart\n")
+
+        option = displayMenu();
+    }
+    if (option === 3) {
+        printCartItems();
+        option = displayMenu();
+    }
+
 }
 
 if (option === 4) {
     exit();
 }
+
