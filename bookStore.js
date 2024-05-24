@@ -21,7 +21,7 @@ let bookList = [
         id: 3
     },
     {
-        name: "1984",
+        name: "Rich Dad Poor Dad",
         price: 90,
         status: "available",
         quantity: 4,
@@ -54,7 +54,14 @@ function displayMenu() {
 }
 
 function displayBookidOption() {
-    console.log("Provide your Book Id which you want To Add");
+    console.log("Provide your Book Id which you want To Add\n");
+    const readline = require("readline-sync");
+    let input = readline.questionInt();
+    return input;
+}
+
+function displayQuantityOption() {
+    console.log("Provide Your Quantity\n");
     const readline = require("readline-sync");
     let input = readline.questionInt();
     return input;
@@ -66,84 +73,101 @@ function showAvailableBooks() {
 | id   |        Name       | Price | Status | Quantity |
 +------+--------------------+-------+----------+------------+`);
     bookList.map(({ name, price, status, quantity, id }) => {
-        console.log(`
-+------+--------------------+-------+----------+------------+
-| ${id} |      ${name}     | ${price} | ${status} | ${quantity}
-+------+--------------------+-------+----------+------------+`);
+        if (quantity === 0) {
+            status = "unavailable";
+        }
+        if (status == "available") {
+
+            console.log(`
+    +------+--------------------+-------+----------+------------+
+    | ${id} |      ${name}     | ${price} | ${status} | ${quantity}
+    +------+--------------------+-------+----------+------------+`);
+        }
     })
 
     console.log("All the available books have shown suuccessfully\n");
 }
 
+function bookAddFunc() {
+    let idInput = displayBookidOption();
+    let quantityInput = displayQuantityOption();
+    bookList.map((book) => {
+        if (book.id === idInput) {
+            cartList[cartList.length] = { ...book };
+            book.quantity = book.quantity - quantityInput;
+        }
+        cartList.map((cartBook) => {
+            cartBook.quantity = quantityInput;
+        })
+    })
+}
+
 function printCartItems() {
+    let total = 0;
     console.log(`
 +------+--------------------+-------+----------+------------+
-| id   |        Name       | Price | Status | Quantity |
+| id   |        Name       | Price | Status | Quantity | Total Price
 +------+--------------------+-------+----------+------------+`);
-    cartList.map(({ id, price, status, name, quantity }) => {
+    cartList.map(({ id, price, name, quantity }) => {
+        total = price * quantity;
         console.log(`
 +------+--------------------+-------+----------+------------+
-| ${id}   |     ${name}    | ${price} | ${status} | ${quantity} |
-+------+--------------------+-------+----------+------------+\n`);
+| ${id}   |     ${name}    | ${price}  | ${quantity} | ${total}
++------+--------------------+-------+----------+------------+`);
     })
+
+    console.log(`
++------+--------------------+-------+----------+------------+
+|            TOTAL CART VALUE          ||     ${total}
++------+--------------------+-------+----------+------------+`);
 }
 
 function exit() {
     console.log("You have logged out successfully \n");
     return;
 }
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 option = displayMenu();
-
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 if (option === 1) {
     showAvailableBooks();
     option = displayMenu()
 }
 
 if (option === 2) {
-    let idInput = displayBookidOption();
-
-    bookList.map((book) => {
-        if (book.id === idInput) {
-            cartList[cartList.length] = { ...book };
-            book.quantity = --book.quantity;
-        }
-        cartList.map((cartBook) => {
-            cartBook.quantity = 1;
-        })
-    })
+    bookAddFunc();
     console.log("We Have successfully Added The Book To The Cart\n")
 
     option = displayMenu();
+
+    if (option === 1) {
+        showAvailableBooks();
+        option = displayMenu();
+    }
 }
 
 if (option === 3) {
     if (cartList.length == 0) {
-        console.log("Cart is Empty Nothing to Show");
+        console.log("Cart is Empty Nothing to Show First Add Items To the Cart\n");
         option = displayMenu()
     } else {
         printCartItems();
-        option = displayMenu();
+
+        // option = displayMenu();
     }
 
     if (option == 2) {
-        let idInput = displayBookidOption();
-
-        bookList.map((book) => {
-            if (book.id === idInput) {
-                cartList[cartList.length] = { ...book };
-                book.quantity = --book.quantity;
-            }
-            cartList.map((cartBook) => {
-                cartBook.quantity = 1;
-            })
-        })
+        bookAddFunc();
         console.log("We Have successfully Added The Book To The Cart\n")
 
         option = displayMenu();
-    }
-    if (option === 3) {
-        printCartItems();
-        option = displayMenu();
+        if (option === 3) {
+            printCartItems();
+            option = displayMenu();
+        }
+        if (option === 1) {
+            showAvailableBooks();
+        }
     }
 
 }
