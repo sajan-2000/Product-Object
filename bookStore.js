@@ -67,6 +67,13 @@ function displayQuantityOption() {
     return input;
 }
 
+function displayNewQuantityOption() {
+    console.log("Again Provide Your Quantity within the available quantity\n");
+    const readline = require("readline-sync");
+    let input = readline.questionInt();
+    return input;
+}
+
 function showAvailableBooks() {
     console.log(`
 +------+--------------------+-------+----------+------------+
@@ -77,12 +84,12 @@ function showAvailableBooks() {
             status = "unavailable";
         }
         if (status == "available") {
-
             console.log(`
-    +------+--------------------+-------+----------+------------+
-    | ${id} |      ${name}     | ${price} | ${status} | ${quantity}
-    +------+--------------------+-------+----------+------------+`);
++------+--------------------+-------+----------+------------+
+| ${id} |      ${name}     | ${price} | ${status} | ${quantity}
++------+--------------------+-------+----------+------------+`);
         }
+
     })
 
     console.log("All the available books have shown suuccessfully\n");
@@ -91,14 +98,34 @@ function showAvailableBooks() {
 function bookAddFunc() {
     let idInput = displayBookidOption();
     let quantityInput = displayQuantityOption();
+    let actualQuantity = 0;
+    let newQuantityInput = 0;
     bookList.map((book) => {
+
         if (book.id === idInput) {
-            cartList[cartList.length] = { ...book };
-            book.quantity = book.quantity - quantityInput;
+            actualQuantity = book.quantity;
+            if (quantityInput <= actualQuantity) {
+                cartList[cartList.length] = { ...book };
+                book.quantity = book.quantity - quantityInput;
+
+                cartList.map((cartBook) => {
+                    cartBook.quantity = quantityInput;
+                })
+            } else {
+                console.log(`Provided quantity is unavailable\n The present quantity is ${actualQuantity}`);
+                newQuantityInput = displayNewQuantityOption();
+
+                cartList[cartList.length] = { ...book }
+                book.quantity = book.quantity - newQuantityInput;
+
+                cartList.map((cartBook) => {
+                    cartBook.quantity = newQuantityInput;
+                })
+            }
+
         }
-        cartList.map((cartBook) => {
-            cartBook.quantity = quantityInput;
-        })
+
+
     })
 }
 
@@ -109,6 +136,7 @@ function printCartItems() {
 | id   |        Name       | Price | Status | Quantity | Total Price
 +------+--------------------+-------+----------+------------+`);
     cartList.map(({ id, price, name, quantity }) => {
+
         total = price * quantity;
         console.log(`
 +------+--------------------+-------+----------+------------+
@@ -142,8 +170,9 @@ if (option === 2) {
 
     if (option === 1) {
         showAvailableBooks();
-        option = displayMenu();
+        option = displayMenu()
     }
+
 }
 
 if (option === 3) {
@@ -153,7 +182,7 @@ if (option === 3) {
     } else {
         printCartItems();
 
-        // option = displayMenu();
+        option = displayMenu(); 444444444
     }
 
     if (option == 2) {
@@ -161,13 +190,19 @@ if (option === 3) {
         console.log("We Have successfully Added The Book To The Cart\n")
 
         option = displayMenu();
+
         if (option === 3) {
             printCartItems();
             option = displayMenu();
         }
+
         if (option === 1) {
             showAvailableBooks();
         }
+    }
+
+    if (option === 1) {
+        showAvailableBooks();
     }
 
 }
