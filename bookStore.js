@@ -43,11 +43,17 @@ let bookList = [
     },]
 
 let cartList = [];
-
+let updateInput;
+let updateOptionInput;
+let reEnter;
+let increaseInput;
 let option;
+let againQuantiyAsk;
+
+let decreaseInput;
 
 function displayMenu() {
-    console.log("1. Show Available Books\n2. Add Book\n3. Show Cart\n4. Exit");
+    console.log("1. Show Available Books\n2. Add Book\n3. Show Cart\n4. Update Cart\n5. Exit");
     const readline = require("readline-sync");
     let input = readline.questionInt();
     return input;
@@ -73,6 +79,25 @@ function displayNewQuantityOption() {
     let input = readline.questionInt();
     return input;
 }
+
+function askQuantity() {
+
+}
+
+function updationOptions() {
+    console.log("Choose What kind of Operation You want To do");
+    console.log("1. Increase\n2. Decrease\n3. Remove");
+    const readline = require("readline-sync");
+    let input = readline.questionInt();
+    return input;
+}
+
+// function displayMenu() {
+//     console.log("1. Show Available Books\n2. Add Book\n3. Show Cart\n4. Update Cart\n5. Exit");
+//     const readline = require("readline-sync");
+//     let input = readline.questionInt();
+//     return input;
+// }
 
 function showAvailableBooks() {
     console.log(`
@@ -150,6 +175,255 @@ function printCartItems() {
 +------+--------------------+-------+----------+------------+`);
 }
 
+function increaseQuantity() {
+    console.log("Enter The Increase Quantity");
+    increaseInput = getInput();
+
+    bookList.map((mainBook) => {
+        if (mainBook.id === updateInput) {
+            if (increaseInput <= mainBook.quantity) {
+                cartList.map((cartBook) => {
+                    cartBook.quantity = cartBook.quantity + increaseInput;
+                    console.log("Successfully increased");
+                    console.log(cartList);
+                })
+                mainBook.quantity = mainBook.quantity - increaseInput;
+                console.log(mainBook);
+
+            } else {
+                if (mainBook.quantity === 0) {
+                    console.log("It is unavailable you cant increase");
+                } else {
+                    console.log(`That much quantity is not there only ${mainBook.quantity} pcs available`);
+
+                    console.log("Please provide valid quantity");
+                    againQuantiyAsk = getInput();
+
+                    bookList.map((againBook) => {
+                        if (againBook.id === updateInput) {
+                            if (againQuantiyAsk <= againBook.quantity) {
+                                cartList.map((cartBook) => {
+                                    cartBook.quantity = cartBook.quantity + againQuantiyAsk;
+                                    console.log("Successfully increased\n");
+                                    console.log("Cartlist Items");
+                                    console.log(cartList);
+                                })
+                                mainBook.quantity = mainBook.quantity - againQuantiyAsk;
+                                console.log("Book store book\n");
+                                console.log(mainBook);
+                            } else {
+                                console.log("I told you its not available now again start");
+                            }
+                        }
+                    })
+                }
+
+
+
+            }
+        }
+    })
+}
+
+function decreaseQuantity() {
+    console.log("Enter The Decrease Quantity");
+    decreaseInput = getInput();
+
+    cartList.map((cartBook) => {
+
+        if (decreaseInput <= cartBook.quantity) {
+            cartBook.quantity = cartBook.quantity - decreaseInput;
+            console.log("Successfully decreased\n");
+            console.log(cartBook);
+            bookList.map((book) => {
+                if (book.id === updateInput) {
+                    book.quantity += decreaseInput;
+                    console.log(book);
+                }
+            })
+        } else {
+            console.log(`Invalid decrease anmount only ${cartBook.quantity} pcs are there to decrease`);
+            console.log("Provide valid decrease amount");
+            decreaseInput = getInput()
+
+            cartList.map((cartBook) => {
+
+                if (decreaseInput <= cartBook.quantity) {
+                    cartBook.quantity = cartBook.quantity - decreaseInput;
+                    console.log(cartBook);
+
+                    bookList.map((book) => {
+                        if (book.id === updateInput) {
+                            book.quantity += decreaseInput;
+                            console.log(book);
+                        }
+                    })
+                }
+            })
+        }
+    })
+
+}
+
+function removeItem() {
+    let cartBookId = 0;
+    let cartBbookQuantity = 0;
+    cartList.shift()
+    console.log("Succefully removed");
+    console.log(cartList);
+
+    cartList.map((cartBook) => {
+        cartBookId = cartBook.id;
+        cartBbookQuantity = cartBook.quantity;
+    })
+
+    bookList.map((book) => {
+        if (book.id === cartBookId) {
+            book.quantity += cartBbookQuantity;
+        }
+
+    })
+}
+
+function option4() {
+    if (cartList.length > 0) {
+        console.log("Enter book id that you want to update");
+        updateInput = getInput();
+
+        cartList.map((book) => {
+            if (book.id === updateInput) {
+
+                updateOptionInput = updationOptions();
+                if (updateOptionInput === 1) {
+                    increaseQuantity()
+                    option = displayMenu();
+                }
+                if (updateOptionInput === 2) {
+                    decreaseQuantity();
+                    option = displayMenu();
+                }
+                if (updateOptionInput === 3) {
+                    removeItem();
+                    option = displayMenu();
+                }
+
+                if (option === 1) {
+                    showAvailableBooks();
+                    option = displayMenu()
+                }
+
+                if (option === 3) {
+                    printCartItems();
+                    option = displayMenu()
+                    chooseMainMenuOption(option);
+                }
+            } else {
+                console.log("This book is not inside There\n");
+                console.log("ReEnter your Book ID correctly");
+                updateInput = getInput();
+
+                cartList.map((book) => {
+                    if (book.id === updateInput) {
+                        updateOptionInput = updationOptions();
+
+                        if (updateOptionInput === 1) {
+                            increaseQuantity()
+                            option = displayMenu()
+                            chooseMainMenuOption(option);
+                        }
+                        if (updateOptionInput === 2) {
+                            decreaseQuantity();
+                            option = displayMenu()
+                            chooseMainMenuOption(option);
+                        }
+                        if (updateOptionInput === 3) {
+                            removeItem();
+                            option = displayMenu()
+                            chooseMainMenuOption(option);
+                        }
+                    }
+                })
+            }
+        })
+
+    } else {
+        console.log("You don't have anything inside your Cart kindly add something");
+        option = displayMenu();
+
+        if (option === 2) {
+            bookAddFunc();
+            console.log("We Have successfully Added The Book To The Cart\n")
+
+            console.log("Now you can update\n");
+            option = displayMenu();
+
+            if (option === 4) {
+                console.log("Enter book id that you want to update");
+                updateInput = getInput();
+
+                cartList.map((book) => {
+                    if (book.id === updateInput) {
+
+                        updateOptionInput = updationOptions();
+                        if (updateOptionInput === 1) {
+                            increaseQuantity()
+                            option = displayMenu();
+                        }
+                        if (updateOptionInput === 2) {
+                            decreaseQuantity();
+                            option = displayMenu();
+                        }
+                        if (updateOptionInput === 3) {
+                            removeItem();
+                            option = displayMenu();
+                        }
+
+                        if (option === 1) {
+                            showAvailableBooks();
+                            option = displayMenu()
+                        }
+
+                        if (option === 3) {
+                            printCartItems();
+                            option = displayMenu();
+                        }
+
+                    } else {
+                        console.log("This book is not inside There\n");
+                        console.log("ReEnter your Book ID correctly");
+                        updateInput = getInput();
+
+                        cartList.map((book) => {
+                            if (book.id === updateInput) {
+                                updateOptionInput = updationOptions();
+
+                                if (updateOptionInput === 1) {
+                                    increaseQuantity();
+                                    option = displayMenu()
+                                    chooseMainMenuOption(option)
+                                }
+                                if (updateOptionInput === 2) {
+                                    decreaseQuantity();
+                                    option = displayMenu()
+                                    chooseMainMenuOption(option)
+                                }
+                                if (updateOptionInput === 3) {
+                                    removeItem();
+                                    option = displayMenu()
+                                    chooseMainMenuOption(option);
+                                }
+                                option = displayMenu()
+                                chooseMainMenuOption(option)
+                            }
+                        })
+                    }
+                })
+            }
+        }
+
+    }
+}
+
 function exit() {
     console.log("You have logged out successfully \n");
     return;
@@ -173,6 +447,9 @@ if (option === 2) {
         option = displayMenu()
     }
 
+    if (option === 3) {
+        printCartItems();
+    }
 }
 
 if (option === 3) {
@@ -182,7 +459,7 @@ if (option === 3) {
     } else {
         printCartItems();
 
-        option = displayMenu(); 444444444
+        option = displayMenu();
     }
 
     if (option == 2) {
@@ -206,8 +483,36 @@ if (option === 3) {
     }
 
 }
+function getInput() {
+    const readline = require("readline-sync");
+    let input = readline.questionInt();
+    return input;
+}
+
+function chooseMainMenuOption(option) {
+    switch (option) {
+        case 1:
+            showAvailableBooks();
+            break;
+        case 2:
+            console.log("Already added");
+            break;
+        case 3:
+            printCartItems();
+            break;
+        case 4:
+            option4();
+
+    }
+}
 
 if (option === 4) {
+    option4();
+}
+
+
+
+if (option === 5) {
     exit();
 }
 
